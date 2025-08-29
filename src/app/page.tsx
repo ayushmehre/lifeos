@@ -225,8 +225,8 @@ export default function Home() {
 										</div>
 									</div>
 									<div className="text-xs text-gray-400">
-										{context.description.length > 30 
-											? `${context.description.substring(0, 30)}...` 
+										{context.description.length > 30
+											? `${context.description.substring(0, 30)}...`
 											: context.description}
 									</div>
 								</div>

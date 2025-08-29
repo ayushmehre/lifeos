@@ -1,7 +1,16 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, Bot, User, Loader2, Download, X, MessageSquare, FolderOpen } from "lucide-react";
+import {
+	Send,
+	Bot,
+	User,
+	Loader2,
+	Download,
+	X,
+	MessageSquare,
+	FolderOpen,
+} from "lucide-react";
 
 interface Message {
 	id: string;
@@ -30,21 +39,33 @@ export default function Home() {
 	const [contexts] = useState<Context[]>([
 		{
 			id: "1",
-			name: "Work Projects",
-			description: "Discussions about work-related projects and tasks",
-			lastUpdated: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
+			name: "general",
+			description: "General discussions and announcements",
+			lastUpdated: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
 		},
 		{
 			id: "2",
-			name: "Personal Goals",
-			description: "Personal development and goal setting conversations",
-			lastUpdated: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
+			name: "work-projects",
+			description: "Work-related projects and tasks",
+			lastUpdated: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
 		},
 		{
 			id: "3",
-			name: "Learning Notes",
+			name: "personal-goals",
+			description: "Personal development and goal setting",
+			lastUpdated: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
+		},
+		{
+			id: "4",
+			name: "learning",
 			description: "Study materials and learning discussions",
 			lastUpdated: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
+		},
+		{
+			id: "5",
+			name: "random",
+			description: "Random thoughts and casual conversations",
+			lastUpdated: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000), // 4 days ago
 		},
 	]);
 	const [inputValue, setInputValue] = useState("");
@@ -155,8 +176,10 @@ export default function Home() {
 
 	const formatDate = (date: Date) => {
 		const now = new Date();
-		const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-		
+		const diffInHours = Math.floor(
+			(now.getTime() - date.getTime()) / (1000 * 60 * 60)
+		);
+
 		if (diffInHours < 1) return "Just now";
 		if (diffInHours < 24) return `${diffInHours}h ago`;
 		if (diffInHours < 48) return "Yesterday";
@@ -183,26 +206,28 @@ export default function Home() {
 			{/* Main Content */}
 			<div className="flex-1 overflow-hidden">
 				{activeTab === "contexts" ? (
-					<div className="h-full overflow-y-auto p-4">
-						<div className="space-y-3">
+					<div className="h-full overflow-y-auto">
+						<div className="py-2">
 							{contexts.map((context) => (
 								<div
 									key={context.id}
-									className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
+									className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer flex items-center justify-between"
 								>
-									<div className="flex items-start justify-between">
-										<div className="flex-1">
-											<h3 className="font-semibold text-gray-900 dark:text-white mb-1">
-												{context.name}
+									<div className="flex items-center space-x-3">
+										<div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+										<div>
+											<h3 className="font-medium text-gray-900 dark:text-white text-sm">
+												#{context.name}
 											</h3>
-											<p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
-												{context.description}
-											</p>
 											<p className="text-xs text-gray-500 dark:text-gray-400">
-												Last updated: {formatDate(context.lastUpdated)}
+												{formatDate(context.lastUpdated)}
 											</p>
 										</div>
-										<FolderOpen className="w-5 h-5 text-gray-400" />
+									</div>
+									<div className="text-xs text-gray-400">
+										{context.description.length > 30 
+											? `${context.description.substring(0, 30)}...` 
+											: context.description}
 									</div>
 								</div>
 							))}
@@ -246,7 +271,9 @@ export default function Home() {
 													: "bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700"
 											}`}
 										>
-											<p className="text-sm whitespace-pre-wrap">{message.content}</p>
+											<p className="text-sm whitespace-pre-wrap">
+												{message.content}
+											</p>
 											<p
 												className={`text-xs mt-1 ${
 													message.role === "user"

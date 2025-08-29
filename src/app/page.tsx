@@ -32,14 +32,7 @@ export default function Home() {
 	const [showAddDialog, setShowAddDialog] = useState(false);
 	const [newContextName, setNewContextName] = useState("");
 	const [newContextDescription, setNewContextDescription] = useState("");
-	const [messages, setMessages] = useState<Message[]>([
-		{
-			id: "1",
-			content: "Hello! I'm your AI assistant. How can I help you today?",
-			role: "assistant",
-			timestamp: new Date(),
-		},
-	]);
+	const [messages, setMessages] = useState<Message[]>([]);
 	const [contexts, setContexts] = useState<Context[]>([
 		{
 			id: "1",
@@ -87,6 +80,20 @@ export default function Home() {
 	useEffect(() => {
 		scrollToBottom();
 	}, [messages]);
+
+	// Add initial welcome message after component mounts
+	useEffect(() => {
+		if (messages.length === 0) {
+			setMessages([
+				{
+					id: "1",
+					content: "Hello! I'm your AI assistant. How can I help you today?",
+					role: "assistant",
+					timestamp: new Date(),
+				},
+			]);
+		}
+	}, [messages.length]);
 
 	useEffect(() => {
 		const handler = (e: Event) => {
@@ -212,6 +219,16 @@ export default function Home() {
 		return date.toLocaleDateString();
 	};
 
+	const formatTime = (date: Date) => {
+		// Use a consistent format that doesn't depend on locale
+		const hours = date.getHours();
+		const minutes = date.getMinutes();
+		const ampm = hours >= 12 ? 'PM' : 'AM';
+		const displayHours = hours % 12 || 12;
+		const displayMinutes = minutes.toString().padStart(2, '0');
+		return `${displayHours}:${displayMinutes} ${ampm}`;
+	};
+
 	return (
 		<div className="flex flex-col h-screen bg-gray-50 dark:bg-gray-900">
 			{/* Header */}
@@ -317,10 +334,7 @@ export default function Home() {
 														: "text-gray-500 dark:text-gray-400"
 												}`}
 											>
-												{message.timestamp.toLocaleTimeString([], {
-													hour: "2-digit",
-													minute: "2-digit",
-												})}
+												{formatTime(message.timestamp)}
 											</p>
 										</div>
 									</div>

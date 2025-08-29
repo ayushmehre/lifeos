@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, Bot, User, Loader2 } from "lucide-react";
+import { Send, Bot, User, Loader2, Download, X } from "lucide-react";
 
 interface Message {
 	id: string;
@@ -21,6 +21,9 @@ export default function Home() {
 	]);
 	const [inputValue, setInputValue] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+	const [showInstallPrompt, setShowInstallPrompt] = useState(false);
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -31,6 +34,31 @@ export default function Home() {
 	useEffect(() => {
 		scrollToBottom();
 	}, [messages]);
+
+	useEffect(() => {
+		const handler = (e: Event) => {
+			e.preventDefault();
+			setDeferredPrompt(e);
+			setShowInstallPrompt(true);
+		};
+
+		window.addEventListener("beforeinstallprompt", handler);
+
+		// Register service worker
+		if ('serviceWorker' in navigator) {
+			navigator.serviceWorker.register('/sw.js')
+				.then((registration) => {
+					console.log('SW registered: ', registration);
+				})
+				.catch((registrationError) => {
+					console.log('SW registration failed: ', registrationError);
+				});
+		}
+
+		return () => {
+			window.removeEventListener("beforeinstallprompt", handler);
+		};
+	}, []);
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -74,6 +102,26 @@ export default function Home() {
 		const textarea = e.target;
 		textarea.style.height = "auto";
 		textarea.style.height = Math.min(textarea.scrollHeight, 120) + "px";
+	};
+
+	const handleInstallClick = async () => {
+		if (!deferredPrompt) return;
+
+		deferredPrompt.prompt();
+		const { outcome } = await deferredPrompt.userChoice;
+		
+		if (outcome === 'accepted') {
+			console.log('User accepted the install prompt');
+		} else {
+			console.log('User dismissed the install prompt');
+		}
+		
+		setDeferredPrompt(null);
+		setShowInstallPrompt(false);
+	};
+
+	const handleDismissInstall = () => {
+		setShowInstallPrompt(false);
 	};
 
 	return (
@@ -199,6 +247,41 @@ export default function Home() {
 					Press Enter to send, Shift+Enter for new line
 				</p>
 			</div>
+
+			{/* PWA Install Prompt */}
+			{showInstallPrompt && (
+				<div className="fixed bottom-4 left-4 right-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4 z-50">
+					<div className="flex items-center justify-between">
+						<div className="flex items-center space-x-3">
+							<div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+								<Download className="w-5 h-5 text-white" />
+							</div>
+							<div>
+								<h3 className="text-sm font-semibold text-gray-900 dark:text-white">
+									Install LifeOS Chat
+								</h3>
+								<p className="text-xs text-gray-500 dark:text-gray-400">
+									Add to home screen for quick access
+								</p>
+							</div>
+						</div>
+						<div className="flex items-center space-x-2">
+							<button
+								onClick={handleInstallClick}
+								className="px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white text-xs font-medium rounded-md transition-colors"
+							>
+								Install
+							</button>
+							<button
+								onClick={handleDismissInstall}
+								className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+							>
+								<X className="w-4 h-4" />
+							</button>
+						</div>
+					</div>
+				</div>
+			)}
 		</div>
 	);
 }

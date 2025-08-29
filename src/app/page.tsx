@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, Bot, User, Loader2, Download, X } from "lucide-react";
+import { Send, Bot, User, Loader2, Download, X, MessageSquare, FolderOpen } from "lucide-react";
 
 interface Message {
 	id: string;
@@ -10,13 +10,41 @@ interface Message {
 	timestamp: Date;
 }
 
+interface Context {
+	id: string;
+	name: string;
+	description: string;
+	lastUpdated: Date;
+}
+
 export default function Home() {
+	const [activeTab, setActiveTab] = useState<"contexts" | "chat">("chat");
 	const [messages, setMessages] = useState<Message[]>([
 		{
 			id: "1",
 			content: "Hello! I'm your AI assistant. How can I help you today?",
 			role: "assistant",
 			timestamp: new Date(),
+		},
+	]);
+	const [contexts] = useState<Context[]>([
+		{
+			id: "1",
+			name: "Work Projects",
+			description: "Discussions about work-related projects and tasks",
+			lastUpdated: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
+		},
+		{
+			id: "2",
+			name: "Personal Goals",
+			description: "Personal development and goal setting conversations",
+			lastUpdated: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
+		},
+		{
+			id: "3",
+			name: "Learning Notes",
+			description: "Study materials and learning discussions",
+			lastUpdated: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
 		},
 	]);
 	const [inputValue, setInputValue] = useState("");
@@ -125,6 +153,16 @@ export default function Home() {
 		setShowInstallPrompt(false);
 	};
 
+	const formatDate = (date: Date) => {
+		const now = new Date();
+		const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+		
+		if (diffInHours < 1) return "Just now";
+		if (diffInHours < 24) return `${diffInHours}h ago`;
+		if (diffInHours < 48) return "Yesterday";
+		return date.toLocaleDateString();
+	};
+
 	return (
 		<div className="flex flex-col h-screen bg-gray-50 dark:bg-gray-900">
 			{/* Header */}
@@ -134,128 +172,189 @@ export default function Home() {
 						<Bot className="w-5 h-5 text-white" />
 					</div>
 					<h1 className="text-xl font-semibold text-gray-900 dark:text-white">
-						LifeOS Chat
+						LifeOS
 					</h1>
 				</div>
 				<div className="text-sm text-gray-500 dark:text-gray-400">
-					AI Assistant
+					{activeTab === "contexts" ? "Contexts" : "AI Assistant"}
 				</div>
 			</header>
 
-			{/* Messages Container */}
-			<div className="flex-1 overflow-y-auto p-4 space-y-4">
-				{messages.map((message) => (
-					<div
-						key={message.id}
-						className={`flex ${
-							message.role === "user" ? "justify-end" : "justify-start"
-						}`}
-					>
-						<div
-							className={`flex max-w-[80%] space-x-2 ${
-								message.role === "user"
-									? "flex-row-reverse space-x-reverse"
-									: ""
-							}`}
-						>
-							<div
-								className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-									message.role === "user"
-										? "bg-blue-500"
-										: "bg-gray-200 dark:bg-gray-700"
-								}`}
-							>
-								{message.role === "user" ? (
-									<User className="w-4 h-4 text-white" />
-								) : (
-									<Bot className="w-4 h-4 text-gray-600 dark:text-gray-300" />
-								)}
-							</div>
-							<div
-								className={`px-4 py-2 rounded-2xl ${
-									message.role === "user"
-										? "bg-blue-500 text-white"
-										: "bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700"
-								}`}
-							>
-								<p className="text-sm whitespace-pre-wrap">{message.content}</p>
-								<p
-									className={`text-xs mt-1 ${
-										message.role === "user"
-											? "text-blue-100"
-											: "text-gray-500 dark:text-gray-400"
-									}`}
+			{/* Main Content */}
+			<div className="flex-1 overflow-hidden">
+				{activeTab === "contexts" ? (
+					<div className="h-full overflow-y-auto p-4">
+						<div className="space-y-3">
+							{contexts.map((context) => (
+								<div
+									key={context.id}
+									className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
 								>
-									{message.timestamp.toLocaleTimeString([], {
-										hour: "2-digit",
-										minute: "2-digit",
-									})}
-								</p>
-							</div>
+									<div className="flex items-start justify-between">
+										<div className="flex-1">
+											<h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+												{context.name}
+											</h3>
+											<p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
+												{context.description}
+											</p>
+											<p className="text-xs text-gray-500 dark:text-gray-400">
+												Last updated: {formatDate(context.lastUpdated)}
+											</p>
+										</div>
+										<FolderOpen className="w-5 h-5 text-gray-400" />
+									</div>
+								</div>
+							))}
 						</div>
 					</div>
-				))}
-
-				{/* Loading indicator */}
-				{isLoading && (
-					<div className="flex justify-start">
-						<div className="flex space-x-2">
-							<div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-								<Bot className="w-4 h-4 text-gray-600 dark:text-gray-300" />
-							</div>
-							<div className="px-4 py-2 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-								<div className="flex items-center space-x-2">
-									<Loader2 className="w-4 h-4 animate-spin text-gray-500" />
-									<span className="text-sm text-gray-500">
-										AI is thinking...
-									</span>
+				) : (
+					<div className="h-full flex flex-col">
+						{/* Messages Container */}
+						<div className="flex-1 overflow-y-auto p-4 space-y-4">
+							{messages.map((message) => (
+								<div
+									key={message.id}
+									className={`flex ${
+										message.role === "user" ? "justify-end" : "justify-start"
+									}`}
+								>
+									<div
+										className={`flex max-w-[80%] space-x-2 ${
+											message.role === "user"
+												? "flex-row-reverse space-x-reverse"
+												: ""
+										}`}
+									>
+										<div
+											className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+												message.role === "user"
+													? "bg-blue-500"
+													: "bg-gray-200 dark:bg-gray-700"
+											}`}
+										>
+											{message.role === "user" ? (
+												<User className="w-4 h-4 text-white" />
+											) : (
+												<Bot className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+											)}
+										</div>
+										<div
+											className={`px-4 py-2 rounded-2xl ${
+												message.role === "user"
+													? "bg-blue-500 text-white"
+													: "bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700"
+											}`}
+										>
+											<p className="text-sm whitespace-pre-wrap">{message.content}</p>
+											<p
+												className={`text-xs mt-1 ${
+													message.role === "user"
+														? "text-blue-100"
+														: "text-gray-500 dark:text-gray-400"
+												}`}
+											>
+												{message.timestamp.toLocaleTimeString([], {
+													hour: "2-digit",
+													minute: "2-digit",
+												})}
+											</p>
+										</div>
+									</div>
 								</div>
-							</div>
+							))}
+
+							{/* Loading indicator */}
+							{isLoading && (
+								<div className="flex justify-start">
+									<div className="flex space-x-2">
+										<div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+											<Bot className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+										</div>
+										<div className="px-4 py-2 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+											<div className="flex items-center space-x-2">
+												<Loader2 className="w-4 h-4 animate-spin text-gray-500" />
+												<span className="text-sm text-gray-500">
+													AI is thinking...
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							)}
+
+							<div ref={messagesEndRef} />
+						</div>
+
+						{/* Input Area */}
+						<div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+							<form onSubmit={handleSubmit} className="flex space-x-4">
+								<div className="flex-1 relative">
+									<textarea
+										ref={inputRef}
+										value={inputValue}
+										onChange={handleTextareaChange}
+										onKeyDown={handleKeyDown}
+										placeholder="Type your message here..."
+										className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+										rows={1}
+										style={{
+											minHeight: "48px",
+											maxHeight: "120px",
+										}}
+										autoComplete="off"
+										autoCorrect="off"
+										autoCapitalize="off"
+										spellCheck="false"
+									/>
+								</div>
+								<button
+									type="submit"
+									disabled={!inputValue.trim() || isLoading}
+									className="px-4 py-3 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 dark:disabled:bg-gray-600 text-white rounded-2xl transition-colors duration-200 flex items-center justify-center disabled:cursor-not-allowed"
+								>
+									<Send className="w-5 h-5" />
+								</button>
+							</form>
+							<p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
+								Press Enter to send, Shift+Enter for new line
+							</p>
 						</div>
 					</div>
 				)}
-
-				<div ref={messagesEndRef} />
 			</div>
 
-			{/* Input Area */}
-			<div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
-				<form onSubmit={handleSubmit} className="flex space-x-4">
-					<div className="flex-1 relative">
-						<textarea
-							ref={inputRef}
-							value={inputValue}
-							onChange={handleTextareaChange}
-							onKeyDown={handleKeyDown}
-							placeholder="Type your message here..."
-							className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
-							rows={1}
-							style={{
-								minHeight: "48px",
-								maxHeight: "120px",
-							}}
-							autoComplete="off"
-							autoCorrect="off"
-							autoCapitalize="off"
-							spellCheck="false"
-						/>
-					</div>
+			{/* Bottom Tab Navigation */}
+			<div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+				<div className="flex">
 					<button
-						type="submit"
-						disabled={!inputValue.trim() || isLoading}
-						className="px-4 py-3 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 dark:disabled:bg-gray-600 text-white rounded-2xl transition-colors duration-200 flex items-center justify-center disabled:cursor-not-allowed"
+						onClick={() => setActiveTab("contexts")}
+						className={`flex-1 flex flex-col items-center py-3 px-2 transition-colors ${
+							activeTab === "contexts"
+								? "text-blue-500 bg-blue-50 dark:bg-blue-900/20"
+								: "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+						}`}
 					>
-						<Send className="w-5 h-5" />
+						<FolderOpen className="w-5 h-5 mb-1" />
+						<span className="text-xs font-medium">Contexts</span>
 					</button>
-				</form>
-				<p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
-					Press Enter to send, Shift+Enter for new line
-				</p>
+					<button
+						onClick={() => setActiveTab("chat")}
+						className={`flex-1 flex flex-col items-center py-3 px-2 transition-colors ${
+							activeTab === "chat"
+								? "text-blue-500 bg-blue-50 dark:bg-blue-900/20"
+								: "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+						}`}
+					>
+						<MessageSquare className="w-5 h-5 mb-1" />
+						<span className="text-xs font-medium">Chat</span>
+					</button>
+				</div>
 			</div>
 
 			{/* PWA Install Prompt */}
 			{showInstallPrompt && (
-				<div className="fixed bottom-4 left-4 right-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4 z-50">
+				<div className="fixed bottom-20 left-4 right-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4 z-50">
 					<div className="flex items-center justify-between">
 						<div className="flex items-center space-x-3">
 							<div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">

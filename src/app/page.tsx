@@ -10,6 +10,7 @@ import {
 	X,
 	MessageSquare,
 	FolderOpen,
+	Plus,
 } from "lucide-react";
 
 interface Message {
@@ -28,6 +29,9 @@ interface Context {
 
 export default function Home() {
 	const [activeTab, setActiveTab] = useState<"contexts" | "chat">("chat");
+	const [showAddDialog, setShowAddDialog] = useState(false);
+	const [newContextName, setNewContextName] = useState("");
+	const [newContextDescription, setNewContextDescription] = useState("");
 	const [messages, setMessages] = useState<Message[]>([
 		{
 			id: "1",
@@ -36,7 +40,7 @@ export default function Home() {
 			timestamp: new Date(),
 		},
 	]);
-	const [contexts] = useState<Context[]>([
+	const [contexts, setContexts] = useState<Context[]>([
 		{
 			id: "1",
 			name: "general",
@@ -174,6 +178,28 @@ export default function Home() {
 		setShowInstallPrompt(false);
 	};
 
+	const handleAddContext = () => {
+		if (!newContextName.trim()) return;
+
+		const newContext: Context = {
+			id: Date.now().toString(),
+			name: newContextName.trim().toLowerCase().replace(/\s+/g, '-'),
+			description: newContextDescription.trim() || "No description",
+			lastUpdated: new Date(),
+		};
+
+		setContexts(prev => [newContext, ...prev]);
+		setNewContextName("");
+		setNewContextDescription("");
+		setShowAddDialog(false);
+	};
+
+	const handleCancelAdd = () => {
+		setNewContextName("");
+		setNewContextDescription("");
+		setShowAddDialog(false);
+	};
+
 	const formatDate = (date: Date) => {
 		const now = new Date();
 		const diffInHours = Math.floor(
@@ -207,6 +233,16 @@ export default function Home() {
 			<div className="flex-1 overflow-hidden">
 				{activeTab === "contexts" ? (
 					<div className="h-full overflow-y-auto">
+						{/* Add Button */}
+						<div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+							<button
+								onClick={() => setShowAddDialog(true)}
+								className="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+							>
+								<Plus className="w-4 h-4" />
+								<span className="text-sm font-medium">Add Context</span>
+							</button>
+						</div>
 						<div className="py-2">
 							{contexts.map((context) => (
 								<div
@@ -378,6 +414,61 @@ export default function Home() {
 					</button>
 				</div>
 			</div>
+
+			{/* Add Context Dialog */}
+			{showAddDialog && (
+				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+					<div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md">
+						<div className="p-6">
+							<h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+								Create New Context
+							</h3>
+							<div className="space-y-4">
+								<div>
+									<label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+										Context Name
+									</label>
+									<input
+										type="text"
+										value={newContextName}
+										onChange={(e) => setNewContextName(e.target.value)}
+										placeholder="e.g., project-name"
+										className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+										autoFocus
+									/>
+								</div>
+								<div>
+									<label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+										Description (optional)
+									</label>
+									<textarea
+										value={newContextDescription}
+										onChange={(e) => setNewContextDescription(e.target.value)}
+										placeholder="Brief description of this context"
+										rows={3}
+										className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 resize-none"
+									/>
+								</div>
+							</div>
+							<div className="flex space-x-3 mt-6">
+								<button
+									onClick={handleCancelAdd}
+									className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+								>
+									Cancel
+								</button>
+								<button
+									onClick={handleAddContext}
+									disabled={!newContextName.trim()}
+									className="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 dark:disabled:bg-gray-600 text-white rounded-lg transition-colors disabled:cursor-not-allowed"
+								>
+									Create
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			)}
 
 			{/* PWA Install Prompt */}
 			{showInstallPrompt && (

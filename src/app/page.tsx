@@ -45,13 +45,14 @@ export default function Home() {
 		window.addEventListener("beforeinstallprompt", handler);
 
 		// Register service worker
-		if ('serviceWorker' in navigator) {
-			navigator.serviceWorker.register('/sw.js')
+		if ("serviceWorker" in navigator) {
+			navigator.serviceWorker
+				.register("/sw.js")
 				.then((registration) => {
-					console.log('SW registered: ', registration);
+					console.log("SW registered: ", registration);
 				})
 				.catch((registrationError) => {
-					console.log('SW registration failed: ', registrationError);
+					console.log("SW registration failed: ", registrationError);
 				});
 		}
 
@@ -109,13 +110,13 @@ export default function Home() {
 
 		deferredPrompt.prompt();
 		const { outcome } = await deferredPrompt.userChoice;
-		
-		if (outcome === 'accepted') {
-			console.log('User accepted the install prompt');
+
+		if (outcome === "accepted") {
+			console.log("User accepted the install prompt");
 		} else {
-			console.log('User dismissed the install prompt');
+			console.log("User dismissed the install prompt");
 		}
-		
+
 		setDeferredPrompt(null);
 		setShowInstallPrompt(false);
 	};
@@ -233,6 +234,10 @@ export default function Home() {
 								minHeight: "48px",
 								maxHeight: "120px",
 							}}
+							autoComplete="off"
+							autoCorrect="off"
+							autoCapitalize="off"
+							spellCheck="false"
 						/>
 					</div>
 					<button

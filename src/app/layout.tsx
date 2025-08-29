@@ -32,6 +32,10 @@ export default function RootLayout({
 				<meta name="apple-mobile-web-app-title" content="LifeOS Chat" />
 				<link rel="apple-touch-icon" href="/icon.svg" />
 				<meta name="msapplication-TileColor" content="#3b82f6" />
+				<meta
+					name="viewport"
+					content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+				/>
 			</head>
 			<body
 				className={`${geistSans.variable} ${geistMono.variable} antialiased`}

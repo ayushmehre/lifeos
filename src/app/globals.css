@@ -24,3 +24,24 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Mobile keyboard suggestions bar workaround */
+@media screen and (max-height: 600px) {
+
+  /* Adjust viewport when keyboard is open */
+  .h-screen {
+    height: 100vh;
+    height: -webkit-fill-available;
+  }
+}
+
+/* Hide mobile keyboard suggestions bar */
+@supports (-webkit-touch-callout: none) {
+
+  /* iOS specific */
+  input,
+  textarea {
+    -webkit-user-select: text;
+    -webkit-touch-callout: none;
+  }
+}

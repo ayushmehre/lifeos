@@ -183,12 +183,12 @@ export default function Home() {
 
 		const newContext: Context = {
 			id: Date.now().toString(),
-			name: newContextName.trim().toLowerCase().replace(/\s+/g, '-'),
+			name: newContextName.trim().toLowerCase().replace(/\s+/g, "-"),
 			description: newContextDescription.trim() || "No description",
 			lastUpdated: new Date(),
 		};
 
-		setContexts(prev => [newContext, ...prev]);
+		setContexts((prev) => [newContext, ...prev]);
 		setNewContextName("");
 		setNewContextDescription("");
 		setShowAddDialog(false);

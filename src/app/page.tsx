@@ -190,9 +190,7 @@ export default function Home() {
 					<div className="w-8 h-8 bg-gradient-to-r from-[#36C5F0] to-[#2EB67D] rounded-lg flex items-center justify-center">
 						<Bot className="w-5 h-5 text-white" />
 					</div>
-					<h1 className="text-[15px] font-semibold text-white">
-						LifeOS
-					</h1>
+					<h1 className="text-[15px] font-semibold text-white">LifeOS</h1>
 				</div>
 				<div className="text-[13px] text-white/70">
 					{activeTab === "contexts" ? "Contexts" : "AI Assistant"}
@@ -259,7 +257,9 @@ export default function Home() {
 									>
 										<div
 											className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-												message.role === "user" ? "bg-[#36C5F0]" : "bg-[#3D4043]"
+												message.role === "user"
+													? "bg-[#36C5F0]"
+													: "bg-[#3D4043]"
 											}`}
 										>
 											{message.role === "user" ? (
@@ -268,15 +268,11 @@ export default function Home() {
 												<Bot className="w-4 h-4 text-[#EDEDED]" />
 											)}
 										</div>
-										<div
-											className="px-4 py-2 rounded-2xl bg-[#222529] text-[#EDEDED] border border-[#3D4043]"
-										>
+										<div className="px-4 py-2 rounded-2xl bg-[#222529] text-[#EDEDED] border border-[#3D4043]">
 											<p className="text-sm whitespace-pre-wrap">
 												{message.content}
 											</p>
-											<p
-												className="text-[12px] mt-1 text-[#9AA1A9]"
-											>
+											<p className="text-[12px] mt-1 text-[#9AA1A9]">
 												{formatTime(message.timestamp)}
 											</p>
 										</div>

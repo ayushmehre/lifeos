@@ -9,6 +9,9 @@ pubspec.lock
 # Builds
 build/
 
+# Local env files (do not commit)
+assets/env/.env.local
+
 # iOS/macOS
 ios/Flutter/Flutter.podspec
 ios/Pods/

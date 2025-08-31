@@ -1,3 +1,4 @@
+name = "lifeos"
 pages_build_output_dir = "build/web"
 
 # Note: Pages project name is specified via CLI flag:

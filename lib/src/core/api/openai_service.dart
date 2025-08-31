@@ -9,20 +9,37 @@ class OpenAIService {
 
   OpenAIService({required this.env, required this.client});
 
-  Future<Response<dynamic>> sendChatCompletion({required List<Map<String, String>> messages}) async {
+  /// Sends a non-streaming chat completion request.
+  /// [messages] should be a list like: [{'role': 'user', 'content': '...'}, ...]
+  Future<String> sendChatCompletion({
+    required List<Map<String, String>> messages,
+    String model = 'gpt-4o-mini',
+    double temperature = 0.7,
+  }) async {
     final dio = client.dio;
-    return dio.post(
-      env.openAIBaseUrl + '/chat/completions',
+    final Response<dynamic> res = await dio.post(
+      '${env.openAIBaseUrl}/chat/completions',
       options: Options(
         headers: <String, String>{
-          'Authorization': 'Bearer ' + env.openAIApiKey,
+          'Authorization': 'Bearer ${env.openAIApiKey}',
           'Content-Type': 'application/json',
         },
       ),
       data: <String, dynamic>{
-        'model': 'gpt-4o-mini',
+        'model': model,
+        'temperature': temperature,
         'messages': messages,
       },
     );
+
+    // OpenAI returns: { choices: [ { message: { role, content } } ] }
+    final dynamic choices = res.data['choices'];
+    if (choices is List && choices.isNotEmpty) {
+      final dynamic message = choices.first['message'];
+      if (message is Map && message['content'] is String) {
+        return message['content'] as String;
+      }
+    }
+    throw StateError('Unexpected OpenAI response format');
   }
 }

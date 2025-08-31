@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'app_colors.dart';
 import 'app_typography.dart';
+import 'app_theme_extension.dart';
 
 class AppThemeProvider extends ChangeNotifier {
   ThemeMode _mode = ThemeMode.dark;
@@ -33,6 +34,9 @@ class AppThemeProvider extends ChangeNotifier {
       inputDecorationTheme: const InputDecorationTheme(
         border: OutlineInputBorder(),
       ),
+      extensions: <ThemeExtension<dynamic>>[
+        AppThemeTokens.dark(),
+      ],
     );
   }
 
@@ -45,6 +49,9 @@ class AppThemeProvider extends ChangeNotifier {
         secondary: AppColors.primaryTeal,
       ),
       textTheme: AppTypography.lightTextTheme,
+      extensions: <ThemeExtension<dynamic>>[
+        AppThemeTokens.light(),
+      ],
     );
   }
 }

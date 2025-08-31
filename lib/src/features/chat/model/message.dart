@@ -13,5 +13,3 @@ class ChatMessage {
     required this.timestamp,
   });
 }
-
-

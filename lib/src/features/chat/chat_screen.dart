@@ -51,20 +51,33 @@ class _ChatScreenState extends State<ChatScreen> {
             itemCount: chat.messages.length,
             itemBuilder: (ctx, i) {
               final m = chat.messages[i];
-              final alignment = m.role == ChatRole.user ? Alignment.centerRight : Alignment.centerLeft;
-              final color = m.role == ChatRole.user ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surface;
-              final textColor = m.role == ChatRole.user ? Colors.white : Theme.of(context).colorScheme.onSurface;
+              final alignment = m.role == ChatRole.user
+                  ? Alignment.centerRight
+                  : Alignment.centerLeft;
+              final color = m.role == ChatRole.user
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.surface;
+              final textColor = m.role == ChatRole.user
+                  ? Colors.white
+                  : Theme.of(context).colorScheme.onSurface;
               return Align(
                 alignment: alignment,
                 child: Container(
                   margin: const EdgeInsets.symmetric(vertical: 6),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
                   decoration: BoxDecoration(
                     color: color,
                     borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.2)),
+                    border: Border.all(
+                      color: Theme.of(context).dividerColor.withOpacity(0.2),
+                    ),
                   ),
-                  constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.8),
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width * 0.8,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -72,7 +85,10 @@ class _ChatScreenState extends State<ChatScreen> {
                       const SizedBox(height: 4),
                       Text(
                         _formatTime(m.timestamp),
-                        style: TextStyle(fontSize: 11, color: textColor.withOpacity(0.8)),
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: textColor.withOpacity(0.8),
+                        ),
                       ),
                     ],
                   ),
@@ -109,7 +125,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     minLines: 1,
                     maxLines: 4,
                     decoration: const InputDecoration(
-                      hintText: 'Type your message here...'
+                      hintText: 'Type your message here...',
                     ),
                     onSubmitted: (_) => _send(),
                   ),
@@ -136,5 +152,3 @@ class _ChatScreenState extends State<ChatScreen> {
     return displayHours.toString() + ':' + minutes + ' ' + ampm;
   }
 }
-
-

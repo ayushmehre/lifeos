@@ -14,15 +14,17 @@ class ApiClient {
     );
     final dio = Dio(options);
 
-    dio.interceptors.add(InterceptorsWrapper(
-      onRequest: (options, handler) {
-        options.headers.putIfAbsent('Accept', () => 'application/json');
-        handler.next(options);
-      },
-      onError: (error, handler) {
-        handler.next(error);
-      },
-    ));
+    dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) {
+          options.headers.putIfAbsent('Accept', () => 'application/json');
+          handler.next(options);
+        },
+        onError: (error, handler) {
+          handler.next(error);
+        },
+      ),
+    );
 
     return ApiClient._(dio);
   }

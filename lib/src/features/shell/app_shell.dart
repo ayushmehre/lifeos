@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../contexts/contexts_screen.dart';
 import '../chat/chat_screen.dart';
+import '../../shared/widgets/app_header.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({super.key});
@@ -18,7 +19,7 @@ class _AppShellState extends State<AppShell> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Lifeos'), centerTitle: false),
+      appBar: const AppHeader(title: 'Lifeos'),
       body: _screens[_index],
       bottomNavigationBar: NavigationBar(
         selectedIndex: _index,

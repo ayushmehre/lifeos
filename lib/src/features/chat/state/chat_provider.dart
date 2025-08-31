@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/env/env.dart';
+import '../../../core/api/api_client.dart';
+import '../../../core/api/openai_service.dart';
 import '../model/message.dart';
 
 class ChatProvider extends ChangeNotifier {
   final AppEnvironment environment;
+
+  late final OpenAIService _openAI = OpenAIService(
+    env: environment,
+    client: ApiClient.create(env: environment),
+  );
 
   ChatProvider({required this.environment});
 
@@ -29,16 +36,32 @@ class ChatProvider extends ChangeNotifier {
     if (_isLoading) return;
     _isLoading = true;
     notifyListeners();
-    await Future<void>.delayed(const Duration(milliseconds: 600));
-    _messages.add(ChatMessage(
-      id: (DateTime.now().millisecondsSinceEpoch + 1).toString(),
-      role: ChatRole.assistant,
-      content: 'I received your message: "' + prompt + '". This is a simulated response. API wiring is ready.',
-      timestamp: DateTime.now(),
-    ));
+    try {
+      final reply = await _openAI.sendChatCompletion(
+        messages: <Map<String, String>>[
+          const {'role': 'system', 'content': 'You are a helpful assistant.'},
+          {'role': 'user', 'content': prompt},
+        ],
+      );
+      _messages.add(
+        ChatMessage(
+          id: (DateTime.now().millisecondsSinceEpoch + 1).toString(),
+          role: ChatRole.assistant,
+          content: reply,
+          timestamp: DateTime.now(),
+        ),
+      );
+    } catch (e) {
+      _messages.add(
+        ChatMessage(
+          id: (DateTime.now().millisecondsSinceEpoch + 1).toString(),
+          role: ChatRole.assistant,
+          content: 'Failed to fetch AI response: $e',
+          timestamp: DateTime.now(),
+        ),
+      );
+    }
     _isLoading = false;
     notifyListeners();
   }
 }
-
-

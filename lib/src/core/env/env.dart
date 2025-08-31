@@ -59,11 +59,21 @@ class AppEnvironment {
     return AppEnvironment(
       appName: fallback('APP_NAME', appName, defaultValue: 'Lifeos'),
       openAIApiKey: fallback('OPENAI_API_KEY', openAIApiKey),
-      openAIBaseUrl: fallback('OPENAI_BASE_URL', openAIBaseUrl, defaultValue: 'https://api.openai.com/v1'),
+      openAIBaseUrl: fallback(
+        'OPENAI_BASE_URL',
+        openAIBaseUrl,
+        defaultValue: 'https://api.openai.com/v1',
+      ),
       supabaseUrl: fallback('SUPABASE_URL', supabaseUrl),
       supabaseAnonKey: fallback('SUPABASE_ANON_KEY', supabaseAnonKey),
-      supabaseServiceRoleKey: fallback('SUPABASE_SERVICE_ROLE_KEY', supabaseServiceRoleKey),
-      supabaseEdgeBaseUrl: fallback('SUPABASE_EDGE_BASE_URL', supabaseEdgeBaseUrl),
+      supabaseServiceRoleKey: fallback(
+        'SUPABASE_SERVICE_ROLE_KEY',
+        supabaseServiceRoleKey,
+      ),
+      supabaseEdgeBaseUrl: fallback(
+        'SUPABASE_EDGE_BASE_URL',
+        supabaseEdgeBaseUrl,
+      ),
     );
   }
 }

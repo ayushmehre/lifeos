@@ -1,0 +1,5 @@
+pages_build_output_dir = "build/web"
+
+# Note: Pages project name is specified via CLI flag:
+#   wrangler pages deploy --project-name <project>
+# Or use the Justfile recipe added in this repo.

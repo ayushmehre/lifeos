@@ -20,27 +20,26 @@ class AppEnvironment {
   });
 
   static AppEnvironment loadFromDartDefine() {
-    String read(String name, {String? fallback}) {
-      const env = String.fromEnvironment;
-      final value = env(name);
-      if (value.isEmpty) {
-        if (fallback != null) return fallback;
-        throw StateError('Missing required dart-define: ' + name);
-      }
-      return value;
-    }
+    // Use const compile-time reads; provide safe defaults to avoid runtime crash
+    const appName = String.fromEnvironment('APP_NAME', defaultValue: 'Lifeos');
+    const openAIApiKey = String.fromEnvironment('OPENAI_API_KEY', defaultValue: '');
+    const openAIBaseUrl = String.fromEnvironment(
+      'OPENAI_BASE_URL',
+      defaultValue: 'https://api.openai.com/v1',
+    );
+    const supabaseUrl = String.fromEnvironment('SUPABASE_URL', defaultValue: '');
+    const supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY', defaultValue: '');
+    const supabaseServiceRoleKey = String.fromEnvironment('SUPABASE_SERVICE_ROLE_KEY', defaultValue: '');
+    const supabaseEdgeBaseUrl = String.fromEnvironment('SUPABASE_EDGE_BASE_URL', defaultValue: '');
 
     return AppEnvironment(
-      appName: read('APP_NAME', fallback: 'Lifeos'),
-      openAIApiKey: read('OPENAI_API_KEY'),
-      openAIBaseUrl: read(
-        'OPENAI_BASE_URL',
-        fallback: 'https://api.openai.com/v1',
-      ),
-      supabaseUrl: read('SUPABASE_URL'),
-      supabaseAnonKey: read('SUPABASE_ANON_KEY'),
-      supabaseServiceRoleKey: read('SUPABASE_SERVICE_ROLE_KEY', fallback: ''),
-      supabaseEdgeBaseUrl: read('SUPABASE_EDGE_BASE_URL'),
+      appName: appName,
+      openAIApiKey: openAIApiKey,
+      openAIBaseUrl: openAIBaseUrl,
+      supabaseUrl: supabaseUrl,
+      supabaseAnonKey: supabaseAnonKey,
+      supabaseServiceRoleKey: supabaseServiceRoleKey,
+      supabaseEdgeBaseUrl: supabaseEdgeBaseUrl,
     );
   }
 }

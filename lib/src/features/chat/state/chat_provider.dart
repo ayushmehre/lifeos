@@ -72,7 +72,9 @@ class ChatProvider extends ChangeNotifier {
       timestamp: DateTime.now(),
     );
 
-    _messages.add(ChatMessageWithStatus(message: msg, status: MessageStatus.sent));
+    _messages.add(
+      ChatMessageWithStatus(message: msg, status: MessageStatus.sent),
+    );
     _lastError = null;
     notifyListeners();
   }
@@ -127,11 +129,14 @@ class ChatProvider extends ChangeNotifier {
       final errorMsg = ChatMessage(
         id: 'error_${DateTime.now().millisecondsSinceEpoch}',
         role: ChatRole.assistant,
-        content: 'Sorry, I encountered an error: ${e.toString()}. Please try again.',
+        content:
+            'Sorry, I encountered an error: ${e.toString()}. Please try again.',
         timestamp: DateTime.now(),
       );
 
-      _messages.add(ChatMessageWithStatus(message: errorMsg, status: MessageStatus.error));
+      _messages.add(
+        ChatMessageWithStatus(message: errorMsg, status: MessageStatus.error),
+      );
       _lastError = e.toString();
     }
 
@@ -145,12 +150,14 @@ class ChatProvider extends ChangeNotifier {
     // Add system message
     history.add(const {
       'role': 'system',
-      'content': 'You are LifeOS, a helpful AI assistant. Provide clear, concise, and accurate responses. You have access to information and can help with various tasks.',
+      'content':
+          'You are LifeOS, a helpful AI assistant. Provide clear, concise, and accurate responses. You have access to information and can help with various tasks.',
     });
 
     // Add conversation history (excluding typing indicators and errors)
     for (final msg in _messages) {
-      if (msg.status != MessageStatus.typing && msg.status != MessageStatus.error) {
+      if (msg.status != MessageStatus.typing &&
+          msg.status != MessageStatus.error) {
         history.add({
           'role': msg.message.role == ChatRole.user ? 'user' : 'assistant',
           'content': msg.message.content,
@@ -169,7 +176,9 @@ class ChatProvider extends ChangeNotifier {
   }
 
   void retryLastMessage() {
-    if (_messages.isEmpty || !_messages.last.message.content.contains('error')) return;
+    if (_messages.isEmpty || !_messages.last.message.content.contains('error')) {
+      return;
+    }
 
     // Find the last user message and retry
     final lastUserMsg = _messages.lastWhere(
@@ -179,6 +188,52 @@ class ChatProvider extends ChangeNotifier {
 
     if (lastUserMsg.message.role == ChatRole.user) {
       sendMessage(lastUserMsg.message.content);
+    }
+  }
+
+  Future<void> editMessage(String messageId, String newContent) async {
+    if (newContent.trim().isEmpty) return;
+
+    final messageIndex = _messages.indexWhere(
+      (msg) => msg.message.id == messageId && msg.message.role == ChatRole.user,
+    );
+
+    if (messageIndex == -1) return;
+
+    // Update the message content
+    final oldMessage = _messages[messageIndex].message;
+    final updatedMessage = ChatMessage(
+      id: oldMessage.id,
+      role: oldMessage.role,
+      content: newContent.trim(),
+      timestamp: DateTime.now(), // Update timestamp to show it was edited
+    );
+
+    _messages[messageIndex] = ChatMessageWithStatus(
+      message: updatedMessage,
+      status: MessageStatus.sent,
+    );
+
+    // Remove all messages after this one (since we're changing history)
+    _messages.removeRange(messageIndex + 1, _messages.length);
+
+    notifyListeners();
+
+    // Send the edited message
+    await sendMessage(newContent.trim());
+  }
+
+  void deleteMessage(String messageId) {
+    _messages.removeWhere((msg) => msg.message.id == messageId);
+    notifyListeners();
+  }
+
+  Future<bool> copyMessageToClipboard(String content) async {
+    try {
+      // We'll implement clipboard functionality in the UI layer
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 }

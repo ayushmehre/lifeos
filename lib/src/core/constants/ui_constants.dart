@@ -18,7 +18,8 @@ class UiConstants {
 }
 
 class UiStrings {
-  static const String welcomeMessage = 'Hello! I\'m your AI assistant. How can I help you today?';
+  static const String welcomeMessage =
+      'Hello! I\'m your AI assistant. How can I help you today?';
   static const String aiThinkingMessage = 'AI is thinking...';
   static const String listeningHint = 'Listening...';
   static const String typeMessageHint = 'Type your message...';
@@ -26,7 +27,8 @@ class UiStrings {
   static const String startVoiceInputTooltip = 'Start voice input';
   static const String sendButtonLabel = 'Send';
   static const String clearConversationTitle = 'Clear conversation?';
-  static const String clearConversationMessage = 'This will delete all messages in the current chat.';
+  static const String clearConversationMessage =
+      'This will delete all messages in the current chat.';
   static const String cancelButtonLabel = 'Cancel';
   static const String clearButtonLabel = 'Clear';
   static const String copyActionLabel = 'Copy message';
@@ -34,7 +36,8 @@ class UiStrings {
   static const String deleteActionLabel = 'Delete message';
   static const String editMessageHint = 'Edit message...';
   static const String saveButtonLabel = 'Save';
-  static const String speechNotAvailableMessage = 'Speech recognition not available';
+  static const String speechNotAvailableMessage =
+      'Speech recognition not available';
   static const String speechErrorMessage = 'Speech recognition error: ';
   static const String messageCopiedMessage = 'Message copied to clipboard';
   static const String apiErrorPrefix = 'Sorry, I encountered an error: ';

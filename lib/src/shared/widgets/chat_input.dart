@@ -128,7 +128,9 @@ class _ChatInputState extends State<ChatInput> {
                 minLines: 1,
                 maxLines: 4,
                 decoration: InputDecoration(
-                  hintText: _isListening ? 'Listening...' : (widget.hintText ?? 'Type your message...'),
+                  hintText: _isListening
+                      ? 'Listening...'
+                      : (widget.hintText ?? 'Type your message...'),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -142,7 +144,9 @@ class _ChatInputState extends State<ChatInput> {
                       color: _isListening ? Colors.red : null,
                     ),
                     onPressed: _startListening,
-                    tooltip: _isListening ? 'Stop listening' : 'Start voice input',
+                    tooltip: _isListening
+                        ? 'Stop listening'
+                        : 'Start voice input',
                   ),
                 ),
                 onSubmitted: _handleSubmitted,
@@ -151,7 +155,10 @@ class _ChatInputState extends State<ChatInput> {
             ),
             const SizedBox(width: 8),
             FilledButton.icon(
-              onPressed: (widget.isTyping || widget.controller.text.trim().isEmpty) ? null : _handleSend,
+              onPressed:
+                  (widget.isTyping || widget.controller.text.trim().isEmpty)
+                  ? null
+                  : _handleSend,
               icon: const Icon(Icons.send),
               label: const Text('Send'),
             ),

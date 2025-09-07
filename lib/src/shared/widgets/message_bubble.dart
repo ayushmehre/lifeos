@@ -72,10 +72,7 @@ class MessageBubble extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                message.content,
-                style: TextStyle(color: textColor),
-              ),
+              Text(message.content, style: TextStyle(color: textColor)),
               const SizedBox(height: 4),
               Row(
                 mainAxisSize: MainAxisSize.min,
@@ -87,7 +84,8 @@ class MessageBubble extends StatelessWidget {
                       color: textColor.withOpacity(0.8),
                     ),
                   ),
-                  if (messageWithStatus.status == MessageStatus.error && onRetryTap != null)
+                  if (messageWithStatus.status == MessageStatus.error &&
+                      onRetryTap != null)
                     IconButton(
                       icon: const Icon(Icons.refresh, size: 16),
                       onPressed: onRetryTap,
@@ -130,7 +128,9 @@ class MessageActionsSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final message = messageWithStatus.message;
-    final canEdit = message.role == ChatRole.user && messageWithStatus.status != MessageStatus.typing;
+    final canEdit =
+        message.role == ChatRole.user &&
+        messageWithStatus.status != MessageStatus.typing;
 
     return SafeArea(
       child: Column(
@@ -144,7 +144,9 @@ class MessageActionsSheet extends StatelessWidget {
                 await Clipboard.setData(ClipboardData(text: message.content));
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Message copied to clipboard')),
+                    const SnackBar(
+                      content: Text('Message copied to clipboard'),
+                    ),
                   );
                 }
               }
@@ -163,7 +165,10 @@ class MessageActionsSheet extends StatelessWidget {
           if (onDelete != null)
             ListTile(
               leading: const Icon(Icons.delete, color: Colors.red),
-              title: const Text('Delete message', style: TextStyle(color: Colors.red)),
+              title: const Text(
+                'Delete message',
+                style: TextStyle(color: Colors.red),
+              ),
               onTap: () {
                 onDelete!();
                 Navigator.of(context).pop();
